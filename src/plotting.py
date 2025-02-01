@@ -1,23 +1,14 @@
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
-import numpy as np
+import seaborn as sns
+import os
 
 def plot_tree(linkage_matrix, labels, output_path="results/phylogenetic_tree.png"):
     """
     Plots and saves the phylogenetic tree.
-
-    Args:
-        linkage_matrix: Output from scipy.cluster.hierarchy.linkage
-        labels: List of sequence labels
-        output_path: Where to save the plot
     """
     plt.figure(figsize=(15, 10))
 
-    # calculate optimal leaf rotation based on number of sequences
-    n_seqs = len(labels)
-    leaf_rotation = min(90, max(0, n_seqs * 0.5))
-
-    # plot dendrogram
     dendrogram(
         linkage_matrix,
         labels=labels,
@@ -32,11 +23,23 @@ def plot_tree(linkage_matrix, labels, output_path="results/phylogenetic_tree.png
     plt.title("Phylogenetic Tree")
     plt.xlabel("Sequences")
     plt.ylabel("Distance")
-
-    # add grid for better distance reference
     plt.grid(True, axis='y', linestyle='--', alpha=0.3)
-
-    # adjust layout and save
     plt.tight_layout()
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_heatmap(data, title, output_path):
+    """
+    Plot gene expression data as a heatmap.
+    """
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)  # Ensure directory exists
+
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(data, cmap='RdBu_r', center=0, robust=True, vmin=-2, vmax=2)
+    plt.title(title)
+    plt.xlabel('Time Points')
+    plt.ylabel('Genes')
+    plt.tight_layout()
+    plt.savefig(output_path)
     plt.close()
